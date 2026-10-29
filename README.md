@@ -1,4 +1,4 @@
-# StudyBloom · 本地分享版
+# ToDo deadline list · 本地分享版
 
 一个使用柔和配色的课程待办工作台。HTML、CSS 和 JavaScript 都包含在 `ToDo.html` 中，下载后可直接在浏览器打开，不需要安装依赖、构建项目、注册账号或配置服务器。
 
