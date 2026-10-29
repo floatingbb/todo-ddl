@@ -1,0 +1,5 @@
+# Only these audited release files belong in this repository.
+*
+!ToDo.html
+!README.md
+!.gitignore

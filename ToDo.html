@@ -1,0 +1,3969 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<link rel="icon" href="data:image/svg+xml,
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+  <defs>
+    <linearGradient id='bgGrad' x1='0%' y1='0%' x2='100%' y2='100%'>
+      <stop offset='0%' stop-color='%23FFC2C2'/>
+      <stop offset='100%' stop-color='%238EB2E1'/>
+    </linearGradient>
+  </defs>
+  <rect width='100' height='100' rx='30' fill='url(%23bgGrad)'/>
+  <path d='M25 53 L43 71 L77 29' fill='none' stroke='white' stroke-width='11' stroke-linecap='round' stroke-linejoin='round'/>
+</svg>">
+
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyBloom · 本地分享版</title>
+
+  <style>
+    :root {
+      --theme-primary: #e88ea8;
+      --theme-secondary: #cbbff0;
+      --theme-background: #fffaf7;
+      --theme-light: #fff0f4;
+
+      --card: #ffffff;
+      --text: #3e4656;
+      --title: #5c5874;
+      --muted: #9099a8;
+      --line: #f0e9e5;
+
+      --green: #9ed7b7;
+      --green-light: #e3f7e9;
+      --yellow: #f8dfa1;
+      --yellow-light: #fff0ce;
+      --red: #e89999;
+      --red-light: #ffe4e4;
+
+      --shadow: 0 12px 32px rgba(142, 122, 117, 0.12);
+      --small-shadow: 0 5px 16px rgba(142, 122, 117, 0.1);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(
+          circle at top left,
+          color-mix(in srgb, var(--theme-primary) 18%, white) 0,
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at bottom right,
+          color-mix(in srgb, var(--theme-secondary) 20%, white) 0,
+          transparent 30%
+        ),
+        var(--theme-background);
+      font-family:
+        Inter,
+        "PingFang SC",
+        "Microsoft YaHei",
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.42;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 275px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 26px 18px;
+      overflow-y: auto;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 34px;
+      color: var(--title);
+      font-size: 21px;
+      font-weight: 850;
+    }
+
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 15px;
+      color: white;
+      background: linear-gradient(
+        135deg,
+        var(--theme-primary),
+        var(--theme-secondary)
+      );
+      box-shadow: var(--small-shadow);
+      font-size: 22px;
+    }
+
+    .sidebar-label {
+      margin: 25px 10px 9px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    .nav-button,
+    .course-button {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      width: 100%;
+      margin: 6px 0;
+      padding: 12px 13px;
+      border: 0;
+      border-radius: 15px;
+      color: #72798a;
+      background: transparent;
+      text-align: left;
+      transition: 0.2s ease;
+    }
+
+    .nav-button:hover,
+    .course-button:hover,
+    .nav-button.active,
+    .course-button.active {
+      color: var(--title);
+      background: var(--theme-light);
+      box-shadow: var(--small-shadow);
+      transform: translateY(-1px);
+    }
+
+    .nav-icon {
+      display: grid;
+      place-items: center;
+      width: 27px;
+      height: 27px;
+      border-radius: 10px;
+      background: #f7f3f0;
+      font-size: 14px;
+    }
+
+    .course-dot {
+      flex: 0 0 auto;
+      width: 12px;
+      height: 12px;
+      border: 3px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+
+    .course-text {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sidebar-bottom {
+      margin-top: 25px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .main {
+      min-width: 0;
+      padding: 30px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+
+    .eyebrow {
+      margin: 0 0 9px;
+      color: var(--theme-primary);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+    }
+
+    .title-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--title);
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 11px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .edit-title-button,
+    .close-button,
+    .icon-button,
+    .small-icon {
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      color: #8f96a3;
+      background: white;
+      transition: 0.2s ease;
+    }
+
+    .edit-title-button {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      font-size: 15px;
+    }
+
+    .edit-title-button:hover,
+    .icon-button:hover,
+    .small-icon:hover {
+      border-color: var(--theme-primary);
+      color: var(--theme-primary);
+      background: var(--theme-light);
+    }
+
+    .primary-button,
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 11px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .primary-button {
+      border: 0;
+      color: white;
+      background: linear-gradient(
+        135deg,
+        var(--theme-primary),
+        var(--theme-secondary)
+      );
+      box-shadow: 0 8px 18px rgba(170, 115, 145, 0.26);
+    }
+
+    .primary-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px rgba(170, 115, 145, 0.32);
+    }
+
+    .secondary-button {
+      border: 1px solid var(--line);
+      color: #70798a;
+      background: white;
+    }
+
+    .secondary-button:hover {
+      border-color: var(--theme-primary);
+      background: var(--theme-light);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card {
+      padding: 20px;
+    }
+
+    .stat-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .stat-icon {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border-radius: 12px;
+      font-size: 15px;
+    }
+
+    .stat-icon.pink {
+      background: color-mix(
+        in srgb,
+        var(--theme-primary) 18%,
+        white
+      );
+    }
+
+    .stat-icon.blue {
+      background: #e0f4fc;
+    }
+
+    .stat-icon.green {
+      background: var(--green-light);
+    }
+
+    .stat-icon.yellow {
+      background: #fff3ce;
+    }
+
+    .stat-number {
+      margin: 14px 0 3px;
+      color: var(--title);
+      font-size: 31px;
+      font-weight: 900;
+    }
+
+    .stat-help {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 9px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #f4f0ed;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(
+        90deg,
+        var(--theme-primary),
+        var(--theme-secondary)
+      );
+      transition: width 0.35s ease;
+    }
+
+    .overall-progress {
+      margin-top: 12px;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .course-progress-panel {
+      margin-bottom: 18px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .panel-title {
+      margin: 0;
+      color: var(--title);
+      font-size: 18px;
+    }
+
+    .panel-description {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .course-progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .course-progress-row {
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fffdfc;
+    }
+
+    .course-progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      color: #70798a;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .course-progress-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .filter-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-button {
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      color: #8a92a0;
+      background: white;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .filter-button:hover,
+    .filter-button.active {
+      border-color: var(--theme-primary);
+      color: var(--theme-primary);
+      background: var(--theme-light);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(360px, 0.8fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .task-card {
+      position: relative;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      transition: 0.2s ease;
+    }
+
+    .task-card:hover {
+      border-color: color-mix(
+        in srgb,
+        var(--theme-primary) 45%,
+        white
+      );
+      box-shadow: var(--small-shadow);
+      transform: translateY(-1px);
+    }
+
+    .task-card.completed {
+      background: #fcfbfb;
+      opacity: 0.78;
+    }
+
+    .task-card.completed::after {
+      position: absolute;
+      top: 12px;
+      right: 13px;
+      color: var(--green);
+      content: "完成";
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .task-main {
+      display: flex;
+      gap: 13px;
+    }
+
+    .task-checkbox {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--theme-primary);
+      cursor: pointer;
+    }
+
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-title-line {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .task-title {
+      margin: 0;
+      color: #5b5870;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .completed .task-title {
+      color: #9ba1aa;
+      text-decoration: line-through;
+    }
+
+    .task-description {
+      margin: 7px 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .tag.course {
+      color: #655a6c;
+    }
+
+    .tag.high {
+      color: #bb6969;
+      background: var(--red-light);
+    }
+
+    .tag.medium {
+      color: #b5804c;
+      background: #fff0d7;
+    }
+
+    .tag.low {
+      color: #5d9a76;
+      background: var(--green-light);
+    }
+
+    .tag.status {
+      color: #777f91;
+      background: #f1f1f7;
+    }
+
+    .tag.overdue {
+      color: #bd5c63;
+      background: #ffe1e4;
+    }
+
+    .tag.soon {
+      color: #a56b39;
+      background: var(--yellow-light);
+    }
+
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 13px;
+      padding-left: 33px;
+    }
+
+    .status-select {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      color: #6e7584;
+      background: white;
+      font-size: 12px;
+    }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      font-size: 14px;
+    }
+
+    .icon-button.delete:hover {
+      border-color: #efb4b4;
+      color: #c86c6c;
+      background: #fff2f2;
+    }
+
+    .empty-state {
+      padding: 35px 16px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 27px;
+    }
+
+    .timeline::before {
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 7px;
+      width: 2px;
+      border-radius: 99px;
+      background: color-mix(
+        in srgb,
+        var(--theme-primary) 28%,
+        white
+      );
+      content: "";
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 22px;
+    }
+
+    .timeline-item::before {
+      position: absolute;
+      top: 4px;
+      left: -25px;
+      width: 11px;
+      height: 11px;
+      border: 3px solid white;
+      border-radius: 50%;
+      background: var(--theme-primary);
+      box-shadow: 0 0 0 2px color-mix(
+        in srgb,
+        var(--theme-primary) 30%,
+        white
+      );
+      content: "";
+    }
+
+    .timeline-date {
+      color: var(--theme-primary);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.7;
+    }
+
+    .timeline-title {
+      margin-top: 5px;
+      color: #5e6172;
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.5;
+    }
+
+    .timeline-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 7px;
+    }
+
+    /* 连续 DDL 时间轴 */
+
+    .visual-timeline {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .visual-timeline-title {
+      margin-bottom: 7px;
+      color: var(--title);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .visual-timeline-description {
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .timeline-axis-wrapper {
+      position: relative;
+      padding: 56px 8px 58px;
+    }
+
+    .timeline-axis {
+      position: relative;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(
+        90deg,
+        #e8b0b0 0%,
+        #f2d4d4 18%,
+        var(--theme-primary) 18%,
+        var(--theme-secondary) 100%
+      );
+      box-shadow: 0 2px 7px rgba(150, 120, 130, 0.16);
+    }
+
+    .timeline-axis::before {
+      position: absolute;
+      top: 50%;
+      left: 18%;
+      z-index: 1;
+      width: 2px;
+      height: 32px;
+      background: rgba(157, 112, 112, 0.48);
+      content: "";
+      transform: translateY(-50%);
+    }
+
+
+
+    .overdue-zone {
+      position: absolute;
+      top: -14px;
+      bottom: -14px;
+      left: 0;
+      width: 18%;
+      border-radius: 10px 0 0 10px;
+      background: rgba(231, 175, 175, 0.13);
+      pointer-events: none;
+    }
+
+    .overdue-zone-label {
+      position: absolute;
+      top: -42px;
+      left: 9%;
+      z-index: 5;
+      width: max-content;
+      max-width: 130px;
+      padding: 5px 8px;
+      border-radius: 9px;
+      color: #b66f6f;
+      background: #fff0f0;
+      font-size: 10px;
+      font-weight: 900;
+      transform: translateX(-50%);
+    }
+
+    /* 现在：只显示一个圆点 */
+
+    .axis-now {
+      position: absolute;
+      top: 50%;
+      z-index: 6;
+      width: 17px;
+      height: 17px;
+      border: 3px solid white;
+      border-radius: 50%;
+      background: #6f7787;
+      box-shadow: 0 0 0 2px #c3c8d0;
+      transform: translate(-50%, -50%);
+    }
+
+    .axis-now-label {
+      position: absolute;
+      bottom: 27px;
+      left: 50%;
+      width: max-content;
+      max-width: 150px;
+      padding: 5px 8px;
+      border-radius: 9px;
+      color: #626a79;
+      background: #f0f2f5;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+
+    .axis-now-label::after {
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      width: 1px;
+      height: 15px;
+      background: #a7aeb9;
+      content: "";
+      transform: translateX(-50%);
+    }
+
+    /* 未来任务 */
+
+    .axis-task {
+      position: absolute;
+      z-index: 4;
+      width: 16px;
+      height: 16px;
+      border: 3px solid white;
+      border-radius: 50%;
+      background: var(--task-color);
+      box-shadow: 0 0 0 2px var(--task-color);
+      transform: translateX(-50%);
+    }
+
+    .axis-task-label {
+      position: absolute;
+      left: 50%;
+      width: max-content;
+      max-width: 180px;
+      padding: 6px 8px;
+      overflow: hidden;
+      border: 1px solid color-mix(
+        in srgb,
+        var(--task-color) 40%,
+        white
+      );
+      border-radius: 10px;
+      color: #646b79;
+      background: white;
+      box-shadow: var(--small-shadow);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.35;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+
+    .axis-task-label::after {
+      position: absolute;
+      left: 50%;
+      width: 1px;
+      height: 15px;
+      background: color-mix(
+        in srgb,
+        var(--task-color) 50%,
+        white
+      );
+      content: "";
+      transform: translateX(-50%);
+    }
+
+    .axis-task.task-top {
+      top: -8px;
+    }
+
+    .axis-task.task-top .axis-task-label {
+      bottom: 28px;
+    }
+
+    .axis-task.task-top .axis-task-label::after {
+      bottom: -15px;
+    }
+
+    .axis-task.task-bottom {
+      top: 0;
+    }
+
+    .axis-task.task-bottom .axis-task-label {
+      top: 28px;
+    }
+
+    .axis-task.task-bottom .axis-task-label::after {
+      top: -15px;
+    }
+
+    /* 逾期任务 */
+
+    .axis-overdue-task {
+      position: absolute;
+      z-index: 4;
+      width: 16px;
+      height: 16px;
+      border: 3px solid white;
+      border-radius: 50%;
+      background: var(--task-color);
+      box-shadow: 0 0 0 2px var(--task-color);
+      transform: translateX(-50%);
+    }
+
+    .axis-overdue-task.overdue-top {
+      top: -8px;
+    }
+
+    .axis-overdue-task.overdue-bottom {
+      top: 0;
+    }
+
+    .axis-overdue-task-label {
+      position: absolute;
+      left: 50%;
+      width: max-content;
+      max-width: 155px;
+      padding: 6px 8px;
+      overflow: hidden;
+      border: 1px solid #edc5c5;
+      border-radius: 10px;
+      color: #9d6666;
+      background: #fff8f8;
+      box-shadow: var(--small-shadow);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.4;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+
+    .axis-overdue-task.overdue-top .axis-overdue-task-label {
+      bottom: 28px;
+    }
+
+    .axis-overdue-task.overdue-bottom .axis-overdue-task-label {
+      top: 28px;
+    }
+
+    .axis-overdue-task.overdue-top
+      .axis-overdue-task-label::after {
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      width: 1px;
+      height: 15px;
+      background: #dcaeae;
+      content: "";
+      transform: translateX(-50%);
+    }
+
+    .axis-overdue-task.overdue-bottom
+      .axis-overdue-task-label::after {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      width: 1px;
+      height: 15px;
+      background: #dcaeae;
+      content: "";
+      transform: translateX(-50%);
+    }
+
+    .axis-scale {
+      position: absolute;
+      right: 8px;
+      bottom: 4px;
+      left: 8px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #9ca3af;
+      font-size: 10px;
+    }
+
+    .axis-scale span {
+      max-width: 150px;
+      line-height: 1.35;
+    }
+
+    .axis-scale span:first-child {
+      color: #b47777;
+    }
+
+    .axis-scale span:last-child {
+      text-align: right;
+    }
+
+    .axis-task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 13px;
+    }
+
+    .axis-task-list-heading {
+      margin-bottom: 6px;
+      color: #7b8391;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .axis-task-list-heading.overdue-heading {
+      color: #b47777;
+    }
+
+    .axis-task-list-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      color: #7b8391;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .axis-task-list-dot {
+      flex: 0 0 auto;
+      width: 9px;
+      height: 9px;
+      margin-top: 4px;
+      border-radius: 50%;
+      background: var(--task-color);
+    }
+
+    .visual-timeline-empty {
+      padding: 14px 0 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* 弹窗 */
+
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(87, 75, 80, 0.3);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-layer.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(590px, 100%);
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 25px;
+      background: white;
+      box-shadow: 0 25px 70px rgba(104, 79, 86, 0.25);
+      animation: modal-in 0.2s ease;
+    }
+
+    @keyframes modal-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      margin: 0;
+      color: var(--title);
+      font-size: 20px;
+    }
+
+    .close-button {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 12px;
+      background: #f8f3f1;
+      font-size: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      color: #6d7483;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      color: #5f6675;
+      background: #fffdfc;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--theme-primary);
+      box-shadow: 0 0 0 4px var(--theme-light);
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    input[type="color"] {
+      height: 48px;
+      padding: 4px;
+      cursor: pointer;
+    }
+
+    .color-row {
+      display: grid;
+      grid-template-columns: 1fr 90px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .color-hex {
+      color: #858d9b;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 21px;
+    }
+
+    .course-manage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .manage-course-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fffdfc;
+    }
+
+    .manage-course-name {
+      flex: 1;
+      min-width: 0;
+      color: #646b7b;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .small-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+    }
+
+    /* 庆祝亮片 */
+
+    .confetti {
+      position: fixed;
+      z-index: 100;
+      width: 10px;
+      height: 16px;
+      pointer-events: none;
+      animation: confetti-fall 1.3s ease-out forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        opacity: 1;
+        transform: translate(0, -20px) rotate(0deg);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) rotate(680deg);
+      }
+    }
+
+    /* 响应式 */
+
+    @media (max-width: 1100px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        display: block;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        padding: 17px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        margin-bottom: 16px;
+      }
+
+      .sidebar-label {
+        display: none;
+      }
+
+      .sidebar-nav {
+        display: flex;
+        gap: 7px;
+        overflow-x: auto;
+      }
+
+      .nav-button,
+      .course-button {
+        width: auto;
+        min-width: max-content;
+        margin: 0;
+      }
+
+      .sidebar-bottom {
+        margin-top: 14px;
+        padding-top: 14px;
+      }
+
+      .main {
+        padding: 20px 14px;
+      }
+
+      .topbar {
+        flex-direction: column;
+      }
+
+      .primary-button {
+        width: 100%;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+
+      .color-row {
+        grid-template-columns: 1fr 80px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .task-title-line {
+        flex-direction: column;
+      }
+
+      .task-actions {
+        padding-left: 0;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .filter-list {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 3px;
+      }
+
+      .timeline-axis-wrapper {
+        padding-right: 2px;
+        padding-left: 2px;
+      }
+
+      .axis-scale {
+        right: 2px;
+        left: 2px;
+      }
+
+      .axis-scale span {
+        max-width: 92px;
+      }
+
+      .axis-task-label,
+      .axis-overdue-task-label {
+        max-width: 112px;
+        font-size: 9px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">✓</div>
+        <span>StudyBloom<small style="display:block;font-size:12px;font-weight:400;margin-top:5px;">本地分享版 · 数据仅保存在当前浏览器</small></span>
+      </div>
+
+      <div class="sidebar-label">任务视图</div>
+
+      <nav class="sidebar-nav">
+        <button
+          class="nav-button active"
+          data-course-filter="all"
+        >
+          <span class="nav-icon">◉</span>
+          <span>全部任务</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-label">课程分类</div>
+
+      <nav class="sidebar-nav" id="courseNav"></nav>
+
+      <div class="sidebar-bottom">
+        <button
+          class="secondary-button"
+          id="manageCoursesButton"
+          style="width: 100%; margin-bottom: 9px;"
+        >
+          ⚙ 管理课程
+        </button>
+
+        <button
+          class="secondary-button"
+          id="openSettingsButton"
+          style="width: 100%;"
+        >
+          🎨 工作台设置
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">MY STUDY WORKSPACE</p>
+
+          <div class="title-line">
+            <h1 id="workbenchTitle">
+              课程核心待办工作台
+            </h1>
+
+            <button
+              class="edit-title-button"
+              id="editTitleButton"
+              title="修改工作台名称和说明"
+            >
+              ✎
+            </button>
+          </div>
+
+          <p class="subtitle" id="workbenchSubtitle">
+            将不同课程的任务集中管理。优先处理即将截止和高重要性任务，完成后会自动更新进度与时间线。
+          </p>
+        </div>
+
+        <button class="primary-button" id="addTaskButton">
+          ＋ 添加任务
+        </button>
+      </header>
+
+      <section class="dashboard-grid">
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>总任务量</span>
+            <span class="stat-icon pink">☷</span>
+          </div>
+
+          <div class="stat-number" id="totalCount">0</div>
+          <div class="stat-help">所有课程中的任务</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>已完成量</span>
+            <span class="stat-icon green">✓</span>
+          </div>
+
+          <div class="stat-number" id="completedCount">0</div>
+          <div class="stat-help">已经完成的任务</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>进行中任务</span>
+            <span class="stat-icon blue">↗</span>
+          </div>
+
+          <div class="stat-number" id="progressCount">0</div>
+          <div class="stat-help">当前正在处理的任务</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>整体完成度</span>
+            <span class="stat-icon yellow">%</span>
+          </div>
+
+          <div class="stat-number" id="overallPercent">
+            0%
+          </div>
+
+          <div class="overall-progress">
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                id="overallBar"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel course-progress-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">各课程完成度</h2>
+
+            <p class="panel-description">
+              每门课程单独统计已完成任务比例。
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="course-progress-list"
+          id="courseProgressList"
+        ></div>
+      </section>
+
+      <div class="toolbar">
+        <div class="filter-list">
+          <button
+            class="filter-button active"
+            data-status-filter="all"
+          >
+            全部
+          </button>
+
+          <button
+            class="filter-button"
+            data-status-filter="not-started"
+          >
+            未开始
+          </button>
+
+          <button
+            class="filter-button"
+            data-status-filter="in-progress"
+          >
+            进行中
+          </button>
+
+          <button
+            class="filter-button"
+            data-status-filter="done"
+          >
+            已完成
+          </button>
+        </div>
+
+        <button
+          class="secondary-button"
+          id="clearFilterButton"
+        >
+          重置筛选
+        </button>
+      </div>
+
+      <div class="content-grid">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">核心待办</h2>
+
+              <p class="panel-description">
+                未完成任务按截止日期排序，已完成任务排列在最下方。
+              </p>
+            </div>
+
+            <span
+              class="tag status"
+              id="visibleCount"
+            >
+              0 项
+            </span>
+          </div>
+
+          <div class="task-list" id="taskList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">DDL 时间线</h2>
+
+              <p class="panel-description">
+                已完成任务会自动从时间线中移除。
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline" id="timeline"></div>
+          <div
+            class="visual-timeline"
+            id="visualTimeline"
+          ></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- 添加 / 编辑任务弹窗 -->
+
+  <div class="modal-layer" id="taskModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="taskModalTitle">
+          添加学习任务
+        </h2>
+
+        <button
+          class="close-button"
+          data-close-modal="taskModal"
+        >
+          ×
+        </button>
+      </div>
+
+      <form id="taskForm">
+        <input
+          type="hidden"
+          id="editingTaskId"
+        />
+
+        <div class="form-grid">
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="taskName"
+            >
+              任务名称
+            </label>
+
+            <input
+              id="taskName"
+              required
+              placeholder=""
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              class="form-label"
+              for="taskCourse"
+            >
+              课程类别
+            </label>
+
+            <select
+              id="taskCourse"
+              required
+            ></select>
+          </div>
+
+          <div class="form-group">
+            <label
+              class="form-label"
+              for="taskPriority"
+            >
+              重要性级别
+            </label>
+
+            <select id="taskPriority">
+              <option value="high">
+                高重要性
+              </option>
+
+              <option
+                value="medium"
+                selected
+              >
+                中重要性
+              </option>
+
+              <option value="low">
+                低重要性
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label
+              class="form-label"
+              for="taskDeadlineDate"
+            >
+              截止日期
+            </label>
+
+            <input
+              id="taskDeadlineDate"
+              type="date"
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              class="form-label"
+              for="taskDeadlineTime"
+            >
+              截止时间
+            </label>
+
+            <input
+              id="taskDeadlineTime"
+              type="time"
+              value="23:59"
+            />
+          </div>
+
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="taskDescription"
+            >
+              任务说明
+            </label>
+
+            <textarea
+              id="taskDescription"
+              placeholder=""
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="secondary-button"
+            data-close-modal="taskModal"
+          >
+            取消
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+          >
+            保存任务
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 课程管理弹窗 -->
+
+  <div class="modal-layer" id="courseManageModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          管理课程分类
+        </h2>
+
+        <button
+          class="close-button"
+          data-close-modal="courseManageModal"
+        >
+          ×
+        </button>
+      </div>
+
+      <p
+        class="panel-description"
+        style="margin-bottom: 16px;"
+      >
+        可以添加课程、修改名称和颜色，也可以调整课程排序。
+      </p>
+
+      <div
+        class="course-manage-list"
+        id="courseManageList"
+      ></div>
+
+      <div class="modal-footer">
+        <button
+          class="primary-button"
+          id="addCourseButton"
+        >
+          ＋ 添加课程
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 课程表单弹窗 -->
+
+  <div class="modal-layer" id="courseFormModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2
+          class="modal-title"
+          id="courseFormTitle"
+        >
+          添加课程
+        </h2>
+
+        <button
+          class="close-button"
+          data-close-modal="courseFormModal"
+        >
+          ×
+        </button>
+      </div>
+
+      <form id="courseForm">
+        <input
+          type="hidden"
+          id="editingCourseId"
+        />
+
+        <div class="form-grid">
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="courseName"
+            >
+              课程名称
+            </label>
+
+            <input
+              id="courseName"
+              required
+              placeholder="例如：数学"
+            />
+          </div>
+
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="courseColor"
+            >
+              课程颜色
+            </label>
+
+            <div class="color-row">
+              <input
+                id="courseColor"
+                type="color"
+                value="#A9D9EF"
+              />
+
+              <span
+                class="color-hex"
+                id="courseColorHex"
+              >
+                #A9D9EF
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="secondary-button"
+            data-close-modal="courseFormModal"
+          >
+            取消
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+          >
+            保存课程
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 工作台设置弹窗 -->
+
+  <div class="modal-layer" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          工作台设置
+        </h2>
+
+        <button
+          class="close-button"
+          data-close-modal="settingsModal"
+        >
+          ×
+        </button>
+      </div>
+
+      <form id="settingsForm">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="workbenchNameInput"
+            >
+              工作台名称
+            </label>
+
+            <input
+              id="workbenchNameInput"
+              required
+              placeholder="例如：我的课程学习工作台"
+            />
+          </div>
+
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="workbenchSubtitleInput"
+            >
+              工作台说明文字
+            </label>
+
+            <textarea
+              id="workbenchSubtitleInput"
+              required
+              placeholder="例如：集中安排课程任务和考试计划。"
+            ></textarea>
+          </div>
+
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="themePrimaryInput"
+            >
+              主题主颜色
+            </label>
+
+            <div class="color-row">
+              <input
+                id="themePrimaryInput"
+                type="color"
+                value="#E88EA8"
+              />
+
+              <span
+                class="color-hex"
+                id="themePrimaryHex"
+              >
+                #E88EA8
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="themeSecondaryInput"
+            >
+              主题辅助颜色
+            </label>
+
+            <div class="color-row">
+              <input
+                id="themeSecondaryInput"
+                type="color"
+                value="#CBBFF0"
+              />
+
+              <span
+                class="color-hex"
+                id="themeSecondaryHex"
+              >
+                #CBBFF0
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group full">
+            <label
+              class="form-label"
+              for="themeBackgroundInput"
+            >
+              页面背景颜色
+            </label>
+
+            <div class="color-row">
+              <input
+                id="themeBackgroundInput"
+                type="color"
+                value="#FFFAF7"
+              />
+
+              <span
+                class="color-hex"
+                id="themeBackgroundHex"
+              >
+                #FFFAF7
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="secondary-button"
+            data-close-modal="settingsModal"
+          >
+            取消
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+          >
+            保存设置
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const COURSE_STORAGE_KEY =
+      "studybloom_public_local_courses_v1";
+
+    const TASK_STORAGE_KEY =
+      "studybloom_public_local_tasks_v1";
+
+    const SETTINGS_STORAGE_KEY =
+      "studybloom_public_local_settings_v1";
+
+    const defaultCourses = [
+      {
+        id: "course-example-1",
+        name: "示例课程 A",
+        color: "#A9D9EF",
+        order: 0
+      },
+      {
+        id: "course-example-2",
+        name: "示例课程 B",
+        color: "#F8DFA1",
+        order: 1
+      }
+    ];
+
+    const defaultTasks = [ ];
+
+    const defaultSettings = {
+      title: "课程核心待办工作台",
+      subtitle:
+        "将不同课程的任务集中管理。优先处理即将截止和高重要性任务，完成后会自动更新进度与时间线。",
+      primaryColor: "#E88EA8",
+      secondaryColor: "#CBBFF0",
+      backgroundColor: "#FFFAF7"
+    };
+
+    const statusLabels = {
+      "not-started": "未开始",
+      "in-progress": "进行中",
+      done: "已完成"
+    };
+
+    const priorityLabels = {
+      high: "高重要性",
+      medium: "中重要性",
+      low: "低重要性"
+    };
+
+    let courses = loadData(
+      COURSE_STORAGE_KEY,
+      defaultCourses
+    );
+
+    let tasks = loadData(
+      TASK_STORAGE_KEY,
+      defaultTasks
+    ).map(task => ({
+      ...task,
+      status:
+        task.status === "blocked"
+          ? "not-started"
+          : task.status,
+      completedAt: task.completedAt || null
+    }));
+
+    let settings = {
+      ...defaultSettings,
+      ...loadData(
+        SETTINGS_STORAGE_KEY,
+        defaultSettings
+      )
+    };
+
+    let selectedCourseId = "all";
+    let selectedStatus = "all";
+
+    function loadData(key, fallback) {
+      const saved = localStorage.getItem(key);
+
+      if (!saved) {
+        return JSON.parse(JSON.stringify(fallback));
+      }
+
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return JSON.parse(JSON.stringify(fallback));
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(
+        COURSE_STORAGE_KEY,
+        JSON.stringify(courses)
+      );
+
+      localStorage.setItem(
+        TASK_STORAGE_KEY,
+        JSON.stringify(tasks)
+      );
+
+      localStorage.setItem(
+        SETTINGS_STORAGE_KEY,
+        JSON.stringify(settings)
+      );
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getCourse(courseId) {
+      return courses.find(course => course.id === courseId);
+    }
+
+    function sortedCourses() {
+      return [...courses].sort((a, b) => {
+        return a.order - b.order;
+      });
+    }
+
+    function hexToRgb(hex) {
+      const normalized = String(hex)
+        .replace("#", "")
+        .trim();
+
+      if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
+        return null;
+      }
+
+      return {
+        r: parseInt(normalized.slice(0, 2), 16),
+        g: parseInt(normalized.slice(2, 4), 16),
+        b: parseInt(normalized.slice(4, 6), 16)
+      };
+    }
+
+    function rgbToHex(red, green, blue) {
+      return "#" + [red, green, blue]
+        .map(value => {
+          return value.toString(16).padStart(2, "0");
+        })
+        .join("")
+        .toUpperCase();
+    }
+
+    function mixColor(color1, color2, amount) {
+      const first = hexToRgb(color1);
+      const second = hexToRgb(color2);
+
+      if (!first || !second) {
+        return "#FFF0F4";
+      }
+
+      return rgbToHex(
+        Math.round(
+          first.r + (second.r - first.r) * amount
+        ),
+        Math.round(
+          first.g + (second.g - first.g) * amount
+        ),
+        Math.round(
+          first.b + (second.b - first.b) * amount
+        )
+      );
+    }
+
+    function applySettings() {
+      document.documentElement.style.setProperty(
+        "--theme-primary",
+        settings.primaryColor
+      );
+
+      document.documentElement.style.setProperty(
+        "--theme-secondary",
+        settings.secondaryColor
+      );
+
+      document.documentElement.style.setProperty(
+        "--theme-background",
+        settings.backgroundColor
+      );
+
+      document.documentElement.style.setProperty(
+        "--theme-light",
+        mixColor(
+          settings.primaryColor,
+          "#FFFFFF",
+          0.84
+        )
+      );
+
+      document.getElementById(
+        "workbenchTitle"
+      ).textContent = settings.title;
+
+      document.getElementById(
+        "workbenchSubtitle"
+      ).textContent = settings.subtitle;
+
+      document.title = settings.title;
+    }
+
+    function updateColorText(inputId, textId) {
+      const input = document.getElementById(inputId);
+      const text = document.getElementById(textId);
+
+      if (input && text) {
+        text.textContent = input.value.toUpperCase();
+      }
+    }
+
+ function formatDate(value, includeTime = true) {
+  if (!value) {
+    return "未设置截止日期";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "日期格式错误";
+  }
+
+  const weekdays = [
+    "星期日",
+    "星期一",
+    "星期二",
+    "星期三",
+    "星期四",
+    "星期五",
+    "星期六"
+  ];
+
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+
+  /* 不显示年份：仅显示“9月13日” */
+  if (!includeTime) {
+    return `${month}月${day}日`;
+  }
+
+  const hour = String(date.getHours()).padStart(2, "0");
+  const minute = String(date.getMinutes()).padStart(2, "0");
+
+  return `${month}月${day}日 · ${weekdays[date.getDay()]} · ${hour}:${minute}`;
+}
+
+
+    function formatShortDate(value) {
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return "日期错误";
+      }
+
+      const weekdays = [
+        "周日",
+        "周一",
+        "周二",
+        "周三",
+        "周四",
+        "周五",
+        "周六"
+      ];
+
+      return `${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}`;
+    }
+
+    function formatDuration(milliseconds) {
+      if (milliseconds <= 0) {
+        return "不足1分钟";
+      }
+
+      const minute = 1000 * 60;
+      const hour = minute * 60;
+      const day = hour * 24;
+
+      let difference = milliseconds;
+
+      const days = Math.floor(difference / day);
+      difference -= days * day;
+
+      const hours = Math.floor(difference / hour);
+      difference -= hours * hour;
+
+      const minutes = Math.floor(difference / minute);
+
+      const parts = [];
+
+      if (days > 0) {
+        parts.push(`${days}天`);
+      }
+
+      if (hours > 0) {
+        parts.push(`${hours}小时`);
+      }
+
+      if (minutes > 0 && days === 0) {
+        parts.push(`${minutes}分钟`);
+      }
+
+      return parts.length
+        ? parts.join("")
+        : "不足1分钟";
+    }
+
+    function formatOverdueDuration(deadlineValue) {
+      const deadline = new Date(deadlineValue);
+      const difference = Date.now() - deadline.getTime();
+
+      if (difference <= 0) {
+        return "尚未逾期";
+      }
+
+      return formatDuration(difference);
+    }
+
+    function formatRemainingDuration(deadlineValue) {
+      const deadline = new Date(deadlineValue);
+      const difference = deadline.getTime() - Date.now();
+
+      if (difference <= 0) {
+        return "已到期";
+      }
+
+      return formatDuration(difference);
+    }
+
+    function getDeadlineLabel(task) {
+      if (!task.deadline) {
+        return `
+          <span class="tag status">
+            📅 未设置截止日期
+          </span>
+        `;
+      }
+
+      const deadlineTime = new Date(task.deadline).getTime();
+
+      let durationText = "";
+
+      if (task.status !== "done") {
+        durationText =
+          deadlineTime < Date.now()
+            ? ` · 逾期 ${formatOverdueDuration(task.deadline)}`
+            : ` · 还剩 ${formatRemainingDuration(task.deadline)}`;
+      }
+
+      return `
+        <span class="tag status">
+          📅 ${formatDate(task.deadline)}${durationText}
+        </span>
+      `;
+    }
+
+    function deadlineInfo(task) {
+      if (!task.deadline || task.status === "done") {
+        return "";
+      }
+
+      const deadlineTime = new Date(task.deadline).getTime();
+
+      if (deadlineTime < Date.now()) {
+        return `
+          <span class="tag overdue">
+            ⚠ 逾期 ${formatOverdueDuration(task.deadline)}
+          </span>
+        `;
+      }
+
+      const hours =
+        (deadlineTime - Date.now()) / 1000 / 60 / 60;
+
+      if (hours <= 24) {
+        return `
+          <span class="tag soon">
+            ⏰ 还剩 ${formatRemainingDuration(task.deadline)}
+          </span>
+        `;
+      }
+
+      return "";
+    }
+
+    function priorityTag(priority) {
+      return `
+        <span class="tag ${priority}">
+          ${priorityLabels[priority]}
+        </span>
+      `;
+    }
+
+    function statusTag(status) {
+      return `
+        <span class="tag status">
+          ${statusLabels[status]}
+        </span>
+      `;
+    }
+
+    function getVisibleTasks() {
+      return tasks.filter(task => {
+        const matchesCourse =
+          selectedCourseId === "all" ||
+          task.courseId === selectedCourseId;
+
+        const matchesStatus =
+          selectedStatus === "all" ||
+          task.status === selectedStatus;
+
+        return matchesCourse && matchesStatus;
+      });
+    }
+
+    function taskSort(a, b) {
+      const aDone = a.status === "done";
+      const bDone = b.status === "done";
+
+      if (aDone && !bDone) {
+        return 1;
+      }
+
+      if (!aDone && bDone) {
+        return -1;
+      }
+
+      if (aDone && bDone) {
+        return (
+          new Date(b.completedAt || 0).getTime() -
+          new Date(a.completedAt || 0).getTime()
+        );
+      }
+
+      if (!a.deadline && !b.deadline) {
+        return 0;
+      }
+
+      if (!a.deadline) {
+        return 1;
+      }
+
+      if (!b.deadline) {
+        return -1;
+      }
+
+      return new Date(a.deadline) - new Date(b.deadline);
+    }
+
+    function renderSidebar() {
+      const nav = document.getElementById("courseNav");
+
+      nav.innerHTML = sortedCourses()
+        .map(course => `
+          <button
+            class="course-button ${
+              selectedCourseId === course.id
+                ? "active"
+                : ""
+            }"
+            data-course-filter="${course.id}"
+          >
+            <span
+              class="course-dot"
+              style="background: ${course.color};"
+            ></span>
+
+            <span class="course-text">
+              ${escapeHtml(course.name)}
+            </span>
+          </button>
+        `)
+        .join("");
+
+      document
+        .querySelectorAll("[data-course-filter]")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            selectedCourseId =
+              button.dataset.courseFilter;
+
+            render();
+          });
+        });
+    }
+
+    function renderStats() {
+      const total = tasks.length;
+
+      const completed = tasks.filter(
+        task => task.status === "done"
+      ).length;
+
+      const inProgress = tasks.filter(
+        task => task.status === "in-progress"
+      ).length;
+
+      const percentage = total
+        ? Math.round((completed / total) * 100)
+        : 0;
+
+      document.getElementById("totalCount").textContent =
+        total;
+
+      document.getElementById("completedCount").textContent =
+        completed;
+
+      document.getElementById("progressCount").textContent =
+        inProgress;
+
+      document.getElementById("overallPercent").textContent =
+        `${percentage}%`;
+
+      document.getElementById("overallBar").style.width =
+        `${percentage}%`;
+    }
+
+    function renderCourseProgress() {
+      const container = document.getElementById(
+        "courseProgressList"
+      );
+
+      if (!courses.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            还没有课程，请先添加课程分类。
+          </div>
+        `;
+
+        return;
+      }
+
+      container.innerHTML = sortedCourses()
+        .map(course => {
+          const courseTasks = tasks.filter(
+            task => task.courseId === course.id
+          );
+
+          const completed = courseTasks.filter(
+            task => task.status === "done"
+          ).length;
+
+          const percentage = courseTasks.length
+            ? Math.round(
+                (completed / courseTasks.length) * 100
+              )
+            : 0;
+
+          return `
+            <div class="course-progress-row">
+              <div class="course-progress-top">
+                <span class="course-progress-name">
+                  <span
+                    class="course-dot"
+                    style="
+                      display: inline-block;
+                      margin-right: 5px;
+                      background: ${course.color};
+                    "
+                  ></span>
+
+                  ${escapeHtml(course.name)}
+                </span>
+
+                <span>
+                  ${completed}/${courseTasks.length}
+                  · ${percentage}%
+                </span>
+              </div>
+
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  style="
+                    width: ${percentage}%;
+                    background: ${course.color};
+                  "
+                ></div>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function renderTasks() {
+      const list = document.getElementById("taskList");
+
+      const visibleTasks = getVisibleTasks().sort(taskSort);
+
+      document.getElementById("visibleCount").textContent =
+        `${visibleTasks.length} 项`;
+
+      if (!visibleTasks.length) {
+        list.innerHTML = `
+          <div class="empty-state">
+            当前筛选条件下没有任务。<br />
+            可以添加一个新的学习任务。
+          </div>
+        `;
+
+        return;
+      }
+
+      list.innerHTML = visibleTasks
+        .map(task => {
+          const course = getCourse(task.courseId);
+          const completed = task.status === "done";
+
+          return `
+            <article
+              class="task-card ${
+                completed ? "completed" : ""
+              }"
+            >
+              <div class="task-main">
+                <input
+                  class="task-checkbox"
+                  type="checkbox"
+                  data-task-check="${task.id}"
+                  ${completed ? "checked" : ""}
+                  aria-label="完成任务"
+                />
+
+                <div class="task-content">
+                  <div class="task-title-line">
+                    <h3 class="task-title">
+                      ${escapeHtml(task.name)}
+                    </h3>
+
+                    <span
+                      class="tag course"
+                      style="
+                        background: ${
+                          course?.color || "#eeeeee"
+                        };
+                      "
+                    >
+                      ${escapeHtml(
+                        course?.name || "未分类"
+                      )}
+                    </span>
+                  </div>
+
+                  <p class="task-description">
+                    ${escapeHtml(
+                      task.description || "暂无任务说明"
+                    )}
+                  </p>
+
+                  <div class="task-meta">
+                    ${priorityTag(task.priority)}
+                    ${statusTag(task.status)}
+                    ${getDeadlineLabel(task)}
+                    ${deadlineInfo(task)}
+                  </div>
+                </div>
+              </div>
+
+              <div class="task-actions">
+                <select
+                  class="status-select"
+                  data-task-status="${task.id}"
+                >
+                  ${Object.entries(statusLabels)
+                    .map(([value, label]) => `
+                      <option
+                        value="${value}"
+                        ${
+                          task.status === value
+                            ? "selected"
+                            : ""
+                        }
+                      >
+                        ${label}
+                      </option>
+                    `)
+                    .join("")}
+                </select>
+
+                <button
+                  class="icon-button"
+                  title="编辑任务"
+                  data-edit-task="${task.id}"
+                >
+                  ✎
+                </button>
+
+                <button
+                  class="icon-button delete"
+                  title="删除任务"
+                  data-delete-task="${task.id}"
+                >
+                  🗑
+                </button>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+
+      bindTaskEvents();
+    }
+
+    function renderTimeline() {
+      const timeline = document.getElementById("timeline");
+
+      const events = tasks
+        .filter(task => {
+          return task.deadline && task.status !== "done";
+        })
+        .sort((a, b) => {
+          return new Date(a.deadline) - new Date(b.deadline);
+        });
+
+      if (!events.length) {
+        timeline.innerHTML = `
+          <div class="empty-state">
+            当前没有未完成的 DDL。
+          </div>
+        `;
+
+        return;
+      }
+
+      timeline.innerHTML = events
+        .map(task => {
+          const course = getCourse(task.courseId);
+
+          const timeText =
+            new Date(task.deadline).getTime() < Date.now()
+              ? `逾期 ${formatOverdueDuration(task.deadline)}`
+              : `还剩 ${formatRemainingDuration(task.deadline)}`;
+
+          return `
+            <div class="timeline-item">
+              <div class="timeline-date">
+                ${formatDate(task.deadline)}
+                <br />
+                ${timeText}
+              </div>
+
+              <div class="timeline-title">
+                ${escapeHtml(task.name)}
+              </div>
+
+              <div class="timeline-info">
+                <span
+                  class="tag course"
+                  style="
+                    background: ${
+                      course?.color || "#eeeeee"
+                    };
+                  "
+                >
+                  ${escapeHtml(
+                    course?.name || "未分类"
+                  )}
+                </span>
+
+                ${statusTag(task.status)}
+                ${deadlineInfo(task)}
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function renderVisualTimeline() {
+      const container = document.getElementById(
+        "visualTimeline"
+      );
+
+      const events = tasks
+        .filter(task => {
+          return task.deadline && task.status !== "done";
+        })
+        .sort((a, b) => {
+          return new Date(a.deadline) - new Date(b.deadline);
+        });
+
+      if (!events.length) {
+        container.innerHTML = `
+          <div class="visual-timeline">
+            <div class="visual-timeline-title">
+              时间轴
+            </div>
+
+            <div class="visual-timeline-empty">
+              当前没有未完成任务，没有需要显示的时间轴。
+            </div>
+          </div>
+        `;
+
+        return;
+      }
+
+      const now = new Date();
+      const nowTime = now.getTime();
+
+      const overdueTasks = events.filter(task => {
+        return new Date(task.deadline).getTime() < nowTime;
+      });
+
+      const futureTasks = events.filter(task => {
+        return new Date(task.deadline).getTime() >= nowTime;
+      });
+
+      /*
+        左侧 18% 固定作为已逾期区域。
+        右侧 82% 用来显示未来时间，并按真实时间比例排列。
+      */
+
+      const overdueWidth = 18;
+
+      let latestFutureDeadline = futureTasks.length
+        ? Math.max(
+            ...futureTasks.map(task => {
+              return new Date(task.deadline).getTime();
+            })
+          )
+        : nowTime + 24 * 60 * 60 * 1000;
+
+      if (latestFutureDeadline <= nowTime) {
+        latestFutureDeadline =
+          nowTime + 24 * 60 * 60 * 1000;
+      }
+
+      const futureRange =
+        latestFutureDeadline - nowTime;
+
+      function getFuturePosition(taskTime) {
+        const ratio =
+          (taskTime - nowTime) / futureRange;
+
+        return overdueWidth + (
+          Math.max(0, Math.min(1, ratio)) *
+          (100 - overdueWidth)
+        );
+      }
+
+      const overduePositions = {};
+
+      overdueTasks.forEach((task, index) => {
+        if (overdueTasks.length === 1) {
+          overduePositions[task.id] = 9;
+          return;
+        }
+
+        const usableWidth = overdueWidth - 4;
+        const step =
+          usableWidth / (overdueTasks.length - 1);
+
+        overduePositions[task.id] =
+          2 + step * index;
+      });
+
+      const markerTasks = [
+        ...overdueTasks.map(task => ({
+          ...task,
+          position: overduePositions[task.id],
+          isOverdue: true
+        })),
+
+        ...futureTasks.map(task => ({
+          ...task,
+          position: getFuturePosition(
+            new Date(task.deadline).getTime()
+          ),
+          isOverdue: false
+        }))
+      ];
+
+      /*
+        任务标签分为上下两行，减少标签遮挡。
+      */
+
+      const topLane = [];
+      const bottomLane = [];
+      const minimumGap = 12;
+
+      markerTasks
+        .sort((a, b) => a.position - b.position)
+        .forEach((task, index) => {
+          const topAvailable = topLane.every(
+            position => {
+              return Math.abs(
+                position - task.position
+              ) >= minimumGap;
+            }
+          );
+
+          if (topAvailable) {
+            task.lane = "top";
+            topLane.push(task.position);
+            return;
+          }
+
+          const bottomAvailable = bottomLane.every(
+            position => {
+              return Math.abs(
+                position - task.position
+              ) >= minimumGap;
+            }
+          );
+
+          if (bottomAvailable) {
+            task.lane = "bottom";
+            bottomLane.push(task.position);
+            return;
+          }
+
+          task.lane = index % 2 === 0
+            ? "top"
+            : "bottom";
+
+          if (task.lane === "top") {
+            topLane.push(task.position);
+          } else {
+            bottomLane.push(task.position);
+          }
+        });
+
+      const markers = markerTasks
+        .map(task => {
+          const course = getCourse(task.courseId);
+          const color =
+            course?.color || settings.primaryColor;
+
+          if (task.isOverdue) {
+            const laneClass =
+              task.lane === "top"
+                ? "overdue-top"
+                : "overdue-bottom";
+
+            return `
+              <span
+                class="axis-overdue-task ${laneClass}"
+                style="
+                  left: ${task.position}%;
+                  --task-color: ${color};
+                "
+                title="${escapeHtml(task.name)} · 逾期 ${formatOverdueDuration(task.deadline)}"
+              >
+                <span class="axis-overdue-task-label">
+                  ${escapeHtml(task.name)}
+                  <br />
+                  逾期 ${formatOverdueDuration(task.deadline)}
+                </span>
+              </span>
+            `;
+          }
+
+          const laneClass =
+            task.lane === "top"
+              ? "task-top"
+              : "task-bottom";
+
+          return `
+            <span
+              class="axis-task ${laneClass}"
+              style="
+                left: ${task.position}%;
+                --task-color: ${color};
+              "
+              title="${escapeHtml(task.name)} · ${formatDate(task.deadline)}"
+            >
+              <span class="axis-task-label">
+                ${escapeHtml(task.name)}
+                <br />
+                还剩 ${formatRemainingDuration(task.deadline)}
+              </span>
+            </span>
+          `;
+        })
+        .join("");
+
+      const overdueList = overdueTasks
+        .map(task => {
+          const course = getCourse(task.courseId);
+
+          return `
+            <div
+              class="axis-task-list-item"
+              style="
+                --task-color: ${
+                  course?.color || settings.primaryColor
+                };
+              "
+            >
+              <span class="axis-task-list-dot"></span>
+
+              <span>
+                ${escapeHtml(task.name)}
+                · ${escapeHtml(
+                  course?.name || "未分类课程"
+                )}
+                · 逾期 ${formatOverdueDuration(task.deadline)}
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+
+      const futureList = futureTasks
+        .map(task => {
+          const course = getCourse(task.courseId);
+
+          return `
+            <div
+              class="axis-task-list-item"
+              style="
+                --task-color: ${
+                  course?.color || settings.primaryColor
+                };
+              "
+            >
+              <span class="axis-task-list-dot"></span>
+
+              <span>
+                ${escapeHtml(task.name)}
+                · ${escapeHtml(
+                  course?.name || "未分类课程"
+                )}
+                · 截止 ${formatDate(task.deadline)}
+                · 还剩 ${formatRemainingDuration(task.deadline)}
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+
+      const latestDate = formatDate(
+        new Date(latestFutureDeadline).toISOString(),
+        false
+      );
+
+      container.innerHTML = `
+        <div class="visual-timeline">
+          <div class="visual-timeline-title">
+            任务时间轴
+          </div>
+
+          <div class="visual-timeline-description">
+            
+            当前时间：${formatDate(now.toISOString())}
+          </div>
+
+          <div class="timeline-axis-wrapper">
+            <div class="timeline-axis">
+              <div class="overdue-zone"></div>
+
+     
+
+              <span
+                class="axis-now"
+                style="left: ${overdueWidth}%"
+              >
+           
+              </span>
+
+              ${markers}
+            </div>
+
+            <div class="axis-scale">
+            
+
+      
+            </div>
+          </div>
+
+          ${
+            overdueTasks.length
+              ? `
+                <div class="axis-task-list">
+                  <div
+                    class="axis-task-list-heading overdue-heading"
+                  >
+                    已逾期任务
+                  </div>
+
+                  ${overdueList}
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            futureTasks.length
+              ? `
+                <div
+                  class="axis-task-list"
+                  style="
+                    margin-top: ${
+                      overdueTasks.length
+                        ? "16px"
+                        : "13px"
+                    };
+                  "
+                >
+                  <div class="axis-task-list-heading">
+                    未完成未来任务
+                  </div>
+
+                  ${futureList}
+                </div>
+              `
+              : ""
+          }
+        </div>
+      `;
+    }
+
+    function updateCourseOptions() {
+      const select = document.getElementById("taskCourse");
+
+      select.innerHTML = sortedCourses()
+        .map(course => `
+          <option value="${course.id}">
+            ${escapeHtml(course.name)}
+          </option>
+        `)
+        .join("");
+    }
+
+    function render() {
+      applySettings();
+      renderSidebar();
+      renderStats();
+      renderCourseProgress();
+      renderTasks();
+      renderTimeline();
+      renderVisualTimeline();
+      updateCourseOptions();
+    }
+
+    function bindTaskEvents() {
+      document
+        .querySelectorAll("[data-task-check]")
+        .forEach(input => {
+          input.addEventListener("change", () => {
+            updateTaskStatus(
+              input.dataset.taskCheck,
+              input.checked
+                ? "done"
+                : "not-started"
+            );
+          });
+        });
+
+      document
+        .querySelectorAll("[data-task-status]")
+        .forEach(select => {
+          select.addEventListener("change", () => {
+            updateTaskStatus(
+              select.dataset.taskStatus,
+              select.value
+            );
+          });
+        });
+
+      document
+        .querySelectorAll("[data-delete-task]")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            deleteTask(button.dataset.deleteTask);
+          });
+        });
+
+      document
+        .querySelectorAll("[data-edit-task]")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            openEditTask(button.dataset.editTask);
+          });
+        });
+    }
+
+    function updateTaskStatus(taskId, status) {
+      const task = tasks.find(item => item.id === taskId);
+
+      if (!task) {
+        return;
+      }
+
+      const wasCompleted = task.status === "done";
+
+      task.status = status;
+
+      task.completedAt =
+        status === "done"
+          ? new Date().toISOString()
+          : null;
+
+      if (status === "done" && !wasCompleted) {
+        celebrate();
+      }
+
+      saveData();
+      render();
+    }
+
+    function deleteTask(taskId) {
+      const task = tasks.find(item => item.id === taskId);
+
+      if (!task) {
+        return;
+      }
+
+      const confirmed = confirm(
+        `确定要删除任务“${task.name}”吗？此操作无法恢复。`
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      tasks = tasks.filter(item => item.id !== taskId);
+
+      saveData();
+      render();
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("show");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("show");
+    }
+
+    function getDeadlineValue() {
+      const date = document.getElementById(
+        "taskDeadlineDate"
+      ).value;
+
+      const time =
+        document.getElementById(
+          "taskDeadlineTime"
+        ).value || "23:59";
+
+      return date ? `${date}T${time}` : "";
+    }
+
+    function openNewTask() {
+      document.getElementById(
+        "taskModalTitle"
+      ).textContent = "添加学习任务";
+
+      document.getElementById(
+        "editingTaskId"
+      ).value = "";
+
+      document.getElementById("taskForm").reset();
+
+      document.getElementById(
+        "taskDeadlineTime"
+      ).value = "23:59";
+
+      updateCourseOptions();
+
+      if (selectedCourseId !== "all") {
+        document.getElementById(
+          "taskCourse"
+        ).value = selectedCourseId;
+      }
+
+      openModal("taskModal");
+
+      document.getElementById("taskName").focus();
+    }
+
+    function openEditTask(taskId) {
+      const task = tasks.find(item => item.id === taskId);
+
+      if (!task) {
+        return;
+      }
+
+      document.getElementById(
+        "taskModalTitle"
+      ).textContent = "编辑学习任务";
+
+      document.getElementById(
+        "editingTaskId"
+      ).value = task.id;
+
+      document.getElementById("taskName").value =
+        task.name;
+
+      document.getElementById("taskCourse").value =
+        task.courseId;
+
+      document.getElementById("taskPriority").value =
+        task.priority;
+
+      if (task.deadline) {
+        const [date, time] = task.deadline.split("T");
+
+        document.getElementById(
+          "taskDeadlineDate"
+        ).value = date;
+
+        document.getElementById(
+          "taskDeadlineTime"
+        ).value = time || "23:59";
+      } else {
+        document.getElementById(
+          "taskDeadlineDate"
+        ).value = "";
+
+        document.getElementById(
+          "taskDeadlineTime"
+        ).value = "23:59";
+      }
+
+      document.getElementById(
+        "taskDescription"
+      ).value = task.description || "";
+
+      openModal("taskModal");
+    }
+
+    function renderCourseManageList() {
+      const container = document.getElementById(
+        "courseManageList"
+      );
+
+      if (!courses.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            暂时没有课程分类。
+          </div>
+        `;
+
+        return;
+      }
+
+      const ordered = sortedCourses();
+
+      container.innerHTML = ordered
+        .map((course, index) => `
+          <div class="manage-course-row">
+            <span
+              class="course-dot"
+              style="background: ${course.color};"
+            ></span>
+
+            <span class="manage-course-name">
+              ${escapeHtml(course.name)}
+            </span>
+
+            <button
+              class="small-icon"
+              title="上移"
+              data-move-course="up"
+              data-course-id="${course.id}"
+              ${index === 0 ? "disabled" : ""}
+            >
+              ↑
+            </button>
+
+            <button
+              class="small-icon"
+              title="下移"
+              data-move-course="down"
+              data-course-id="${course.id}"
+              ${
+                index === ordered.length - 1
+                  ? "disabled"
+                  : ""
+              }
+            >
+              ↓
+            </button>
+
+            <button
+              class="small-icon"
+              title="编辑课程"
+              data-edit-course="${course.id}"
+            >
+              ✎
+            </button>
+
+            <button
+              class="small-icon"
+              title="删除课程"
+              data-delete-course="${course.id}"
+            >
+              🗑
+            </button>
+          </div>
+        `)
+        .join("");
+
+      document
+        .querySelectorAll("[data-move-course]")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            moveCourse(
+              button.dataset.courseId,
+              button.dataset.moveCourse
+            );
+          });
+        });
+
+      document
+        .querySelectorAll("[data-edit-course]")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            openEditCourse(
+              button.dataset.editCourse
+            );
+          });
+        });
+
+      document
+        .querySelectorAll("[data-delete-course]")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            deleteCourse(
+              button.dataset.deleteCourse
+            );
+          });
+        });
+    }
+
+    function moveCourse(courseId, direction) {
+      const ordered = sortedCourses();
+
+      const index = ordered.findIndex(
+        course => course.id === courseId
+      );
+
+      const targetIndex =
+        direction === "up"
+          ? index - 1
+          : index + 1;
+
+      if (
+        targetIndex < 0 ||
+        targetIndex >= ordered.length
+      ) {
+        return;
+      }
+
+      [
+        ordered[index],
+        ordered[targetIndex]
+      ] = [
+        ordered[targetIndex],
+        ordered[index]
+      ];
+
+      ordered.forEach((course, position) => {
+        course.order = position;
+      });
+
+      courses = ordered;
+
+      saveData();
+      renderCourseManageList();
+      render();
+    }
+
+    function openEditCourse(courseId) {
+      const course = getCourse(courseId);
+
+      if (!course) {
+        return;
+      }
+
+      document.getElementById(
+        "courseFormTitle"
+      ).textContent = "编辑课程";
+
+      document.getElementById(
+        "editingCourseId"
+      ).value = course.id;
+
+      document.getElementById(
+        "courseName"
+      ).value = course.name;
+
+      document.getElementById(
+        "courseColor"
+      ).value = course.color;
+
+      updateColorText(
+        "courseColor",
+        "courseColorHex"
+      );
+
+      openModal("courseFormModal");
+    }
+
+    function deleteCourse(courseId) {
+      const course = getCourse(courseId);
+
+      if (!course) {
+        return;
+      }
+
+      const relatedTasks = tasks.filter(
+        task => task.courseId === courseId
+      );
+
+      if (relatedTasks.length) {
+        alert(
+          `课程“${course.name}”下还有 ${relatedTasks.length} 个任务，请先修改或删除这些任务。`
+        );
+
+        return;
+      }
+
+      if (!confirm(`确定要删除课程“${course.name}”吗？`)) {
+        return;
+      }
+
+      courses = courses
+        .filter(course => course.id !== courseId)
+        .map((course, index) => ({
+          ...course,
+          order: index
+        }));
+
+      if (selectedCourseId === courseId) {
+        selectedCourseId = "all";
+      }
+
+      saveData();
+      renderCourseManageList();
+      render();
+    }
+
+    function openSettings() {
+      document.getElementById(
+        "workbenchNameInput"
+      ).value = settings.title;
+
+      document.getElementById(
+        "workbenchSubtitleInput"
+      ).value = settings.subtitle;
+
+      document.getElementById(
+        "themePrimaryInput"
+      ).value = settings.primaryColor;
+
+      document.getElementById(
+        "themeSecondaryInput"
+      ).value = settings.secondaryColor;
+
+      document.getElementById(
+        "themeBackgroundInput"
+      ).value = settings.backgroundColor;
+
+      updateColorText(
+        "themePrimaryInput",
+        "themePrimaryHex"
+      );
+
+      updateColorText(
+        "themeSecondaryInput",
+        "themeSecondaryHex"
+      );
+
+      updateColorText(
+        "themeBackgroundInput",
+        "themeBackgroundHex"
+      );
+
+      openModal("settingsModal");
+    }
+
+    function celebrate() {
+      const colors = [
+        settings.primaryColor,
+        settings.secondaryColor,
+        "#F8DFA1",
+        "#B8E5CA",
+        "#A9D9EF",
+        "#F7C69D"
+      ];
+
+      for (let index = 0; index < 100; index += 1) {
+        const piece = document.createElement("span");
+
+        piece.className = "confetti";
+
+        piece.style.left =
+          `${Math.random() * 100}vw`;
+
+        piece.style.top =
+          `${Math.random() * 20 + 5}vh`;
+
+        piece.style.background =
+          colors[
+            Math.floor(
+              Math.random() * colors.length
+            )
+          ];
+
+        piece.style.setProperty(
+          "--x",
+          `${(Math.random() - 0.5) * 500}px`
+        );
+
+        piece.style.setProperty(
+          "--y",
+          `${Math.random() * 500 + 220}px`
+        );
+
+        piece.style.transform =
+          `rotate(${Math.random() * 360}deg)`;
+
+        document.body.appendChild(piece);
+
+        setTimeout(() => {
+          piece.remove();
+        }, 1500);
+      }
+    }
+
+    document
+      .getElementById("addTaskButton")
+      .addEventListener("click", openNewTask);
+
+    document
+      .getElementById("taskForm")
+      .addEventListener("submit", event => {
+        event.preventDefault();
+
+        const id = document.getElementById(
+          "editingTaskId"
+        ).value;
+
+        const taskData = {
+          name: document.getElementById(
+            "taskName"
+          ).value.trim(),
+
+          courseId: document.getElementById(
+            "taskCourse"
+          ).value,
+
+          priority: document.getElementById(
+            "taskPriority"
+          ).value,
+
+          deadline: getDeadlineValue(),
+
+          description: document.getElementById(
+            "taskDescription"
+          ).value.trim()
+        };
+
+        if (!taskData.name) {
+          return;
+        }
+
+        if (id) {
+          const task = tasks.find(
+            item => item.id === id
+          );
+
+          if (task) {
+            Object.assign(task, taskData);
+          }
+        } else {
+          tasks.push({
+            id: `task-${Date.now()}`,
+            ...taskData,
+            status: "not-started",
+            completedAt: null
+          });
+        }
+
+        saveData();
+        closeModal("taskModal");
+        render();
+      });
+
+    document
+      .querySelectorAll("[data-status-filter]")
+      .forEach(button => {
+        button.addEventListener("click", () => {
+          selectedStatus =
+            button.dataset.statusFilter;
+
+          document
+            .querySelectorAll("[data-status-filter]")
+            .forEach(item => {
+              item.classList.remove("active");
+            });
+
+          button.classList.add("active");
+          renderTasks();
+        });
+      });
+
+    document
+      .getElementById("clearFilterButton")
+      .addEventListener("click", () => {
+        selectedCourseId = "all";
+        selectedStatus = "all";
+
+        document
+          .querySelectorAll("[data-status-filter]")
+          .forEach(item => {
+            item.classList.remove("active");
+          });
+
+        document
+          .querySelector(
+            '[data-status-filter="all"]'
+          )
+          .classList.add("active");
+
+        render();
+      });
+
+    document
+      .getElementById("manageCoursesButton")
+      .addEventListener("click", () => {
+        renderCourseManageList();
+        openModal("courseManageModal");
+      });
+
+    document
+      .getElementById("addCourseButton")
+      .addEventListener("click", () => {
+        document.getElementById(
+          "courseFormTitle"
+        ).textContent = "添加课程";
+
+        document.getElementById(
+          "editingCourseId"
+        ).value = "";
+
+        document.getElementById(
+          "courseForm"
+        ).reset();
+
+        document.getElementById(
+          "courseColor"
+        ).value = "#A9D9EF";
+
+        updateColorText(
+          "courseColor",
+          "courseColorHex"
+        );
+
+        openModal("courseFormModal");
+      });
+
+    document
+      .getElementById("courseForm")
+      .addEventListener("submit", event => {
+        event.preventDefault();
+
+        const id = document.getElementById(
+          "editingCourseId"
+        ).value;
+
+        const name = document.getElementById(
+          "courseName"
+        ).value.trim();
+
+        const color = document.getElementById(
+          "courseColor"
+        ).value.toUpperCase();
+
+        if (!name) {
+          return;
+        }
+
+        if (id) {
+          const course = getCourse(id);
+
+          if (course) {
+            course.name = name;
+            course.color = color;
+          }
+        } else {
+          courses.push({
+            id: `course-${Date.now()}`,
+            name,
+            color,
+            order: courses.length
+          });
+        }
+
+        saveData();
+        closeModal("courseFormModal");
+        renderCourseManageList();
+        render();
+      });
+
+    document
+      .getElementById("openSettingsButton")
+      .addEventListener("click", openSettings);
+
+    document
+      .getElementById("editTitleButton")
+      .addEventListener("click", openSettings);
+
+    document
+      .getElementById("settingsForm")
+      .addEventListener("submit", event => {
+        event.preventDefault();
+
+        const title = document.getElementById(
+          "workbenchNameInput"
+        ).value.trim();
+
+        const subtitle = document.getElementById(
+          "workbenchSubtitleInput"
+        ).value.trim();
+
+        if (!title || !subtitle) {
+          return;
+        }
+
+        settings = {
+          title,
+          subtitle,
+
+          primaryColor: document.getElementById(
+            "themePrimaryInput"
+          ).value.toUpperCase(),
+
+          secondaryColor: document.getElementById(
+            "themeSecondaryInput"
+          ).value.toUpperCase(),
+
+          backgroundColor: document.getElementById(
+            "themeBackgroundInput"
+          ).value.toUpperCase()
+        };
+
+        saveData();
+        closeModal("settingsModal");
+        render();
+      });
+
+    document
+      .getElementById("courseColor")
+      .addEventListener("input", () => {
+        updateColorText(
+          "courseColor",
+          "courseColorHex"
+        );
+      });
+
+    document
+      .getElementById("themePrimaryInput")
+      .addEventListener("input", event => {
+        settings.primaryColor = event.target.value;
+
+        applySettings();
+
+        updateColorText(
+          "themePrimaryInput",
+          "themePrimaryHex"
+        );
+      });
+
+    document
+      .getElementById("themeSecondaryInput")
+      .addEventListener("input", event => {
+        settings.secondaryColor = event.target.value;
+
+        applySettings();
+
+        updateColorText(
+          "themeSecondaryInput",
+          "themeSecondaryHex"
+        );
+      });
+
+    document
+      .getElementById("themeBackgroundInput")
+      .addEventListener("input", event => {
+        settings.backgroundColor = event.target.value;
+
+        applySettings();
+
+        updateColorText(
+          "themeBackgroundInput",
+          "themeBackgroundHex"
+        );
+      });
+
+    document
+      .querySelectorAll("[data-close-modal]")
+      .forEach(button => {
+        button.addEventListener("click", () => {
+          closeModal(button.dataset.closeModal);
+        });
+      });
+
+    document
+      .querySelectorAll(".modal-layer")
+      .forEach(layer => {
+        layer.addEventListener("click", event => {
+          if (event.target === layer) {
+            closeModal(layer.id);
+          }
+        });
+      });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        document
+          .querySelectorAll(".modal-layer.show")
+          .forEach(modal => {
+            closeModal(modal.id);
+          });
+      }
+    });
+
+    updateColorText(
+      "courseColor",
+      "courseColorHex"
+    );
+
+    applySettings();
+    render();
+
+    /*
+      每分钟刷新一次剩余时间和逾期时间。
+      这样页面打开时，时间会自动更新。
+    */
+    setInterval(() => {
+      renderTasks();
+      renderTimeline();
+      renderVisualTimeline();
+    }, 60000);
+  </script>
+</body>
+</html>
