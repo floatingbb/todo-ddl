@@ -16,8 +16,8 @@
 
 
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StudyBloom · 本地分享版</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ToDo deadline list · 本地分享版</title>
 
   <style>
     :root {
@@ -1383,19 +1383,197 @@
         font-size: 9px;
       }
     }
-  </style>
+  
+html {overflow-x:clip} .main,.content-grid,.panel,.topbar {min-width:0}
+.account-bar {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.account-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.account-actions button,.account-actions a {border:1px solid var(--line);background:var(--theme-light);color:var(--text);padding:8px 12px;border-radius:12px;text-decoration:none;font:inherit}
+#syncStatus {color:var(--muted)} .account-name{max-width:270px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.task-title {overflow-wrap:anywhere} button,a,input,select,textarea {touch-action:manipulation}
+@media(max-width:760px){
+ .account-bar{padding:10px 14px;gap:8px}.account-name{max-width:160px;font-size:12px}.account-actions{gap:6px}
+ .account-actions button,.account-actions a{min-height:40px;padding:8px 10px} .sidebar-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sidebar-bottom button{margin:0!important}
+ input,select,textarea{font-size:16px!important;max-width:100%}button{min-height:42px}.modal-layer{padding:12px!important}.modal{max-height:calc(100dvh - 24px)!important;overflow-y:auto!important;width:100%;}
+ .task-actions{flex-wrap:wrap}.task-title-line{min-width:0}.timeline-axis-wrapper{overflow-x:auto}.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sidebar-nav{padding-bottom:5px}.topbar h1{font-size:26px}.task-meta{flex-wrap:wrap}
+}
+@media(max-width:360px){.dashboard-grid{grid-template-columns:1fr}.account-actions{width:100%}}
+
+</style>
+<meta name="theme-color" content="#fffaf7">
+<style>
+/* Compact mobile workspace; desktop layout keeps the existing presentation. */
+.mobile-brand,.mobile-tools-toggle{display:none}
+.course-strip{display:contents}
+.task-filters{display:contents}
+.completed-task-group{margin-top:7px;border:1px solid var(--line);border-radius:17px;background:#fffdfc;overflow:hidden}
+.completed-task-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:13px 15px;list-style:none;cursor:pointer;color:var(--title);user-select:none}
+.completed-task-summary::-webkit-details-marker{display:none}
+.completed-task-summary:focus-visible{outline:2px solid var(--theme-primary);outline-offset:-3px}
+.completed-task-heading{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800}
+.completed-task-icon{display:grid;place-items:center;width:23px;height:23px;border-radius:8px;background:var(--green-light);color:#588b6b}
+.completed-task-count{font-size:11px;font-weight:600;color:var(--muted)}
+.completed-task-toggle{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}
+.completed-task-arrow{font-size:18px;line-height:1;transition:transform .15s}
+.completed-task-group .when-expanded{display:none}
+.completed-task-group[open] .when-expanded{display:inline}
+.completed-task-group[open] .when-collapsed{display:none}
+.completed-task-group[open] .completed-task-arrow{transform:rotate(180deg)}
+.completed-task-list{display:flex;flex-direction:column;gap:12px;padding:0 12px 12px}
+.completed-task-group:not([open])>.completed-task-list{display:none}
+.course-progress-panel>summary{list-style:none;cursor:pointer}
+.course-progress-panel>summary::-webkit-details-marker{display:none}
+.progress-disclosure{color:var(--muted);transition:transform .2s;font-size:20px;line-height:1}
+.course-progress-panel[open] .progress-disclosure{transform:rotate(180deg)}
+.course-progress-panel:not([open])>.panel-header{margin-bottom:0}
+@media(max-width:760px){
+ html{scroll-padding-top:64px}
+ body{background:var(--theme-background);-webkit-text-size-adjust:100%}
+ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
+ .account-bar{position:sticky;top:0;z-index:40;display:grid;grid-template-columns:auto minmax(0,1fr) 36px;gap:12px;min-height:56px;padding:8px 14px;padding-top:max(8px,env(safe-area-inset-top));border-bottom:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(16px)}
+ .mobile-brand{display:flex;align-items:center;gap:8px;color:var(--title);font-size:15px;font-weight:850;letter-spacing:-.4px}
+ .mobile-brand span{display:grid;place-items:center;width:28px;height:28px;border-radius:10px;background:var(--title);color:#fff;font-size:17px}
+ .account-summary{min-width:0;text-align:right;line-height:1.3}
+ #syncStatus{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#718077}
+ .mobile-tools-toggle{display:grid;place-items:center;width:36px;height:36px;min-height:36px;border:1px solid var(--line);border-radius:12px;background:var(--theme-background);color:var(--title);font-size:21px;line-height:1}
+ .mobile-tools-toggle[aria-expanded=true]{background:var(--title);color:#fff}
+ .account-bar .account-actions{display:none;position:absolute;top:calc(100% + 6px);left:12px;right:12px;z-index:50;grid-template-columns:1fr 1fr;gap:8px;padding:14px;border:1px solid var(--line);border-radius:18px;background:white;box-shadow:0 12px 40px #3e465622}
+ .account-bar.tools-open .account-actions{display:grid}
+ .account-actions .account-name{grid-column:1/-1;width:100%;max-width:none;padding:0 2px 10px;color:var(--muted);font-size:12px;text-align:left;border-bottom:1px solid var(--line)}
+ .account-actions button,.account-actions a{min-height:42px;justify-content:center;text-align:center;font-size:12px;border-radius:11px}
+ .account-actions>a{display:flex;align-items:center}
+ .app{display:block}
+ .sidebar{position:static;overflow:visible;height:auto;padding:5px 14px 7px;border-right:0;border-bottom:1px solid var(--line);background:#fff;backdrop-filter:none}
+ .sidebar>.brand,.sidebar>.sidebar-label,.course-strip>.sidebar-label{display:none}
+ .course-strip{display:flex;align-items:center;gap:7px;overflow-x:auto;margin:0;padding:3px;scrollbar-width:none;overscroll-behavior-inline:contain;width:100%;min-width:0;min-height:40px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--theme-secondary) 11%,white)}
+ .course-strip::-webkit-scrollbar{display:none}
+ .course-strip>.sidebar-nav{display:contents}
+ .course-strip .nav-button,.course-strip .course-button{display:flex;align-items:center;justify-content:center;flex:0 0 auto;gap:6px;min-width:0;width:auto;min-height:32px;margin:0;padding:7px 11px;border:0;border-radius:9px;background:transparent;box-shadow:none;color:#74798a;font-size:11px;white-space:nowrap;transform:none}
+ .course-strip .nav-button .nav-icon{display:none}
+ .course-strip .course-button .course-text{flex:initial;max-width:132px}
+ .course-strip .course-dot{width:8px;height:8px;border:0;box-shadow:none}
+ .course-strip .nav-button.active,.course-strip .course-button.active{border-color:var(--title);background:var(--title);color:#fff;box-shadow:none}
+ .sidebar-bottom{display:flex;justify-content:flex-end;gap:14px;margin:0;padding:0;border:0}
+ .sidebar-bottom .secondary-button{display:inline-flex;width:auto!important;min-height:28px;margin:0!important;padding:4px 0;border:0;border-radius:0;background:none;color:var(--muted);font-size:11px;font-weight:600;box-shadow:none}
+ .main{padding:19px 14px calc(100px + env(safe-area-inset-bottom));min-width:0}
+ .topbar{display:block;margin:0 0 17px}
+ .topbar>div{min-width:0}
+ .eyebrow{display:none}
+ .title-line{gap:9px;align-items:center}
+ h1{font-size:27px;line-height:1.25;letter-spacing:-.6px;overflow-wrap:anywhere}
+ .edit-title-button{width:28px;height:28px;min-height:28px;flex:0 0 auto;border-radius:9px;font-size:12px;box-shadow:none}
+ .subtitle{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+ #addTaskButton{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:30;width:auto;min-height:48px;padding:12px 20px;border-radius:16px;color:#fff;background:var(--title);box-shadow:0 7px 22px #3e465636;font-size:14px;font-weight:750}
+ #addTaskButton:hover{transform:none}
+ .dashboard-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:13px}
+ .stat-card{min-width:0;padding:11px 9px 10px;border-radius:14px;background:#fff;box-shadow:0 2px 8px #3e465604}
+ .stat-label{display:block;font-size:10px;line-height:1.3;font-weight:650;white-space:nowrap;letter-spacing:-.3px}
+ .stat-icon,.stat-help{display:none}
+ .stat-number{margin:8px 0 0;font-size:25px;line-height:1.15;letter-spacing:-.8px}
+ .overall-progress{margin-top:6px}
+ .overall-progress .progress-bar{height:4px}
+ .course-progress-panel{margin-bottom:17px;padding:12px 13px;border-radius:14px;background:#fff;box-shadow:none}
+ .course-progress-panel>.panel-header{align-items:center;gap:12px;margin-bottom:12px}
+ .course-progress-panel .panel-title{font-size:12px;font-weight:750}
+ .course-progress-panel .panel-description{display:none}
+ .course-progress-list{gap:8px}
+ .course-progress-row{padding:9px 10px;border-radius:10px}
+ .course-progress-top{font-size:10px;gap:8px;margin-bottom:6px}
+ .course-progress-row .progress-bar{height:5px}
+ .task-filters{display:flex;flex-direction:column;gap:8px;margin:0 0 17px;min-width:0}
+ .task-filters>.toolbar{display:block;width:100%;margin:0}
+ .toolbar{flex-wrap:nowrap;gap:8px;margin:0}
+ .filter-list{display:flex;flex:1;flex-wrap:nowrap;gap:3px;overflow-x:auto;min-width:0;padding:3px;background:color-mix(in srgb,var(--theme-secondary) 11%,white);border:1px solid var(--line);border-radius:12px;scrollbar-width:none}
+ .filter-button{flex:1;min-height:32px;padding:7px 8px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:11px;white-space:nowrap;font-weight:600}
+ .filter-button.active{color:var(--title);background:#fff;box-shadow:0 1px 5px #3e46560c}
+ #clearFilterButton{flex:0 0 auto;min-height:28px;margin-left:auto;padding:4px 2px;border:0;background:none;color:var(--muted);font-size:10px;font-weight:500}
+ .content-grid{grid-template-columns:minmax(0,1fr);gap:22px}
+ .content-grid>section.panel{padding:0;border:0;border-radius:0;background:none;box-shadow:none;min-width:0}
+ .content-grid .panel-header{align-items:center;margin-bottom:12px}
+ .content-grid .panel-header{gap:9px}
+ .content-grid .panel-title{font-size:16px;font-weight:800}
+ .content-grid .panel-header .panel-description{display:none}
+ #visibleCount{padding:4px 8px;background:#fff;font-size:10px;font-weight:650;border:1px solid var(--line)}
+ .task-list{gap:10px}
+ .completed-task-group{margin-top:5px;border-radius:15px;background:#ffffffaa}
+ .completed-task-summary{min-height:48px;padding:11px 12px}
+ .completed-task-heading{font-size:12px;gap:7px}
+ .completed-task-count,.completed-task-toggle{font-size:10px}
+ .completed-task-list{gap:9px;padding:0 8px 8px}
+ .task-card{padding:14px 12px;border-radius:16px;background:#fff;box-shadow:0 3px 10px #3e465604}
+ .task-card:hover{transform:none}
+ .task-card.completed::after{top:6px;right:10px;font-size:9px}
+ .task-main{gap:10px}
+ .task-checkbox{width:19px;height:19px;margin-top:2px;padding:0}
+ .task-title-line{flex-direction:row;gap:8px;align-items:flex-start}
+ .task-title{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+ .task-title-line>.tag.course{flex:0 0 auto;max-width:105px;padding:4px 7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px}
+ .task-description{margin:5px 0 9px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+ .task-meta{gap:5px}
+ .tag{padding:4px 7px;font-size:9px;line-height:1.4}
+ .task-meta>.tag.soon,.task-meta>.tag.overdue{display:none}
+ .task-actions{gap:7px;margin-top:11px;padding-left:29px}
+ .status-select{min-height:34px;padding:6px 9px;font-size:12px!important;border-radius:10px}
+ .icon-button{width:34px;height:34px;min-height:34px;border-radius:10px;font-size:13px}
+ .empty-state{padding:28px 15px;font-size:12px;border:1px dashed var(--line);border-radius:16px;background:#ffffff88}
+ .timeline{padding:14px 14px 1px 35px;border:1px solid var(--line);border-radius:16px;background:#fff}
+ .timeline::before{left:18px;top:20px;bottom:20px}
+ .timeline-item{margin-bottom:18px}
+ .timeline-item::before{left:-22px}
+ .timeline-date{font-size:10px}
+ .timeline-title{font-size:12px}
+ .visual-timeline{margin-top:18px;padding-top:15px}
+ .visual-timeline-description{font-size:10px}
+ .timeline-axis-wrapper{margin-right:8px;margin-left:8px}
+ .axis-task-label,.axis-overdue-task-label{max-width:95px;font-size:9px}
+ .modal-layer{align-items:flex-end;padding:0;background:#31334266}
+ .modal{width:100%;max-height:90dvh;padding:21px 18px calc(22px + env(safe-area-inset-bottom));border:0;border-radius:24px 24px 0 0;box-shadow:0 -8px 40px #31334222}
+ .modal-header{margin-bottom:18px}
+ .modal-title{font-size:19px}
+ .close-button{width:34px;height:34px;min-height:34px}
+ .form-grid{gap:13px}
+ .form-label{font-size:12px}
+ input,textarea,select{font-size:16px;min-width:0;max-width:100%;border-radius:11px}
+ .modal-footer{gap:9px}
+ .modal-footer .primary-button{min-height:44px;background:var(--title);box-shadow:none;color:#fff}
+ .modal-footer .secondary-button{min-height:44px}
+ .manage-course-row{gap:6px;padding:10px 8px}
+ .manage-course-name{font-size:12px;overflow-wrap:anywhere}
+ .small-icon{width:30px;height:34px;min-height:34px;flex:0 0 auto}
+}
+@media(max-width:350px){
+ .mobile-brand{font-size:13px;gap:6px}
+ .account-bar{gap:7px;padding-right:10px;padding-left:10px}
+ .stat-card{padding-right:7px;padding-left:7px}
+ .stat-label{font-size:9px}
+ .stat-number{font-size:22px}
+ .task-title-line>.tag.course{max-width:78px}
+}
+@media(prefers-reduced-motion:reduce){.progress-disclosure{transition:none}}
+
+</style>
 </head>
 
-<body>
+<body><div class="account-bar">
+  <div class="mobile-brand"><span aria-hidden="true">✓</span>StudyBloom</div>
+  <div class="account-summary"><div class="account-name" id="accountName">本地分享版 · 浏览器存储</div><span id="syncStatus" role="status" aria-live="polite">本机保存 · 不支持多设备同步</span></div>
+  <button type="button" class="mobile-tools-toggle" id="mobileToolsToggle" aria-label="本地备份菜单" aria-expanded="false" aria-controls="accountActions">⋯</button>
+  <div class="account-actions" id="accountActions">
+    <button type="button" id="exportBackup">导出备份</button>
+    <button type="button" id="importBackup">导入备份</button>
+    <input type="file" accept="application/json,.json" id="backupFile" hidden>
+  </div>
+</div>
+
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-icon">✓</div>
-        <span>StudyBloom<small style="display:block;font-size:12px;font-weight:400;margin-top:5px;">本地分享版 · 数据仅保存在当前浏览器</small></span>
+        <span>StudyBloom<small style="display:block;font-size:12px;font-weight:400;margin-top:5px;">本地分享版 · 仅保存于当前浏览器</small></span>
       </div>
 
       <div class="sidebar-label">任务视图</div>
 
+      <div class="course-strip">
       <nav class="sidebar-nav">
         <button
           class="nav-button active"
@@ -1406,9 +1584,12 @@
         </button>
       </nav>
 
-      <div class="sidebar-label">课程分类</div>
 
+
+      <div class="sidebar-label">课程分类</div>
       <nav class="sidebar-nav" id="courseNav"></nav>
+
+      </div>
 
       <div class="sidebar-bottom">
         <button
@@ -1510,8 +1691,8 @@
         </div>
       </section>
 
-      <section class="panel course-progress-panel">
-        <div class="panel-header">
+      <details class="panel course-progress-panel" id="courseProgressPanel" open>
+        <summary class="panel-header">
           <div>
             <h2 class="panel-title">各课程完成度</h2>
 
@@ -1519,14 +1700,16 @@
               每门课程单独统计已完成任务比例。
             </p>
           </div>
-        </div>
+          <span class="progress-disclosure" aria-hidden="true">⌄</span>
+        </summary>
 
         <div
           class="course-progress-list"
           id="courseProgressList"
         ></div>
-      </section>
+      </details>
 
+      <div class="task-filters" id="taskFilters">
       <div class="toolbar">
         <div class="filter-list">
           <button
@@ -1564,6 +1747,8 @@
         >
           重置筛选
         </button>
+      </div>
+
       </div>
 
       <div class="content-grid">
@@ -2022,6 +2207,7 @@
   </div>
 
   <script>
+
     const COURSE_STORAGE_KEY =
       "studybloom_public_local_courses_v1";
 
@@ -2114,22 +2300,11 @@
     }
 
     function saveData() {
-      localStorage.setItem(
-        COURSE_STORAGE_KEY,
-        JSON.stringify(courses)
-      );
-
-      localStorage.setItem(
-        TASK_STORAGE_KEY,
-        JSON.stringify(tasks)
-      );
-
-      localStorage.setItem(
-        SETTINGS_STORAGE_KEY,
-        JSON.stringify(settings)
-      );
+      localStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(courses));
+      localStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(tasks));
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+      document.getElementById("syncStatus").textContent = "已保存到本机 · " + new Date().toLocaleTimeString("zh-CN", {hour:"2-digit",minute:"2-digit"});
     }
-
     function escapeHtml(value) {
       return String(value || "")
         .replaceAll("&", "&amp;")
@@ -2506,6 +2681,8 @@
       document
         .querySelectorAll("[data-course-filter]")
         .forEach(button => {
+          if (button.dataset.courseFilter === selectedCourseId) button.classList.add("active");
+          else button.classList.remove("active");
           button.onclick = () => {
             selectedCourseId =
               button.dataset.courseFilter;
@@ -2616,25 +2793,37 @@
 
     function renderTasks() {
       const list = document.getElementById("taskList");
-
+      const previousGroup = document.getElementById("completedTasksGroup");
+      const expanded = previousGroup && previousGroup.dataset.viewStatus === selectedStatus
+        ? previousGroup.open
+        : selectedStatus === "done";
       const visibleTasks = getVisibleTasks().sort(taskSort);
-
-      document.getElementById("visibleCount").textContent =
-        `${visibleTasks.length} 项`;
+      document.getElementById("visibleCount").textContent = `${visibleTasks.length} 项`;
 
       if (!visibleTasks.length) {
-        list.innerHTML = `
-          <div class="empty-state">
-            当前筛选条件下没有任务。<br />
-            可以添加一个新的学习任务。
-          </div>
-        `;
-
+        list.innerHTML = `<div class="empty-state">当前筛选条件下没有任务。<br />可以添加一个新的学习任务。</div>`;
         return;
       }
 
-      list.innerHTML = visibleTasks
-        .map(task => {
+      const pendingTasks = visibleTasks.filter(task => task.status !== "done");
+      const completedTasks = visibleTasks.filter(task => task.status === "done");
+      list.innerHTML = pendingTasks.map(renderTaskCard).join("") + (
+        completedTasks.length ? `
+          <details class="completed-task-group" id="completedTasksGroup"
+                   data-view-status="${selectedStatus}" ${expanded ? "open" : ""}>
+            <summary class="completed-task-summary">
+              <span class="completed-task-heading"><span class="completed-task-icon" aria-hidden="true">✓</span>
+                已完成 <span class="completed-task-count">${completedTasks.length} 项</span>
+              </span>
+              <span class="completed-task-toggle"><span class="when-collapsed">展开</span><span class="when-expanded">收起</span><span class="completed-task-arrow" aria-hidden="true">⌄</span></span>
+            </summary>
+            <div class="completed-task-list">${completedTasks.map(renderTaskCard).join("")}</div>
+          </details>` : ""
+      );
+      bindTaskEvents();
+    }
+
+    function renderTaskCard(task) {
           const course = getCourse(task.courseId);
           const completed = task.status === "done";
 
@@ -2727,10 +2916,7 @@
               </div>
             </article>
           `;
-        })
-        .join("");
 
-      bindTaskEvents();
     }
 
     function renderTimeline() {
@@ -3966,6 +4152,13 @@
       "courseColorHex"
     );
 
+    globalThis.applyLocalBackup = data => {
+      courses = data.courses; tasks = data.tasks;
+      settings = {...defaultSettings, ...data.settings};
+      if(selectedCourseId !== 'all' && !courses.some(c=>c.id===selectedCourseId)) selectedCourseId='all';
+      applySettings(); render();
+    };
+    globalThis.currentLocalBackup = () => ({courses, tasks, settings});
     applySettings();
     render();
 
@@ -3979,5 +4172,101 @@
       renderVisualTimeline();
     }, 60000);
   </script>
+<script>
+(() => {
+// Layout controls keep the existing account, data and task elements in place.
+const mobileView = window.matchMedia('(max-width: 760px)');
+const accountBar = document.querySelector('.account-bar');
+const accountName = document.getElementById('accountName');
+const summary = document.querySelector('.account-summary');
+const actions = document.querySelector('.account-actions');
+const toolsToggle = document.getElementById('mobileToolsToggle');
+const progress = document.getElementById('courseProgressPanel');
+const courseStrip = document.querySelector('.course-strip');
+const sidebarTools = document.querySelector('.sidebar-bottom');
+const filterStack = document.getElementById('taskFilters');
+const statusToolbar = document.querySelector('.toolbar');
+const resetFilter = document.getElementById('clearFilterButton');
+const taskCount = document.getElementById('visibleCount');
+
+function closeTools() {
+  accountBar.classList.remove('tools-open');
+  toolsToggle.setAttribute('aria-expanded', 'false');
+}
+function fitLayout() {
+  if (mobileView.matches) {
+    actions.prepend(accountName);
+    filterStack.prepend(courseStrip);
+    taskCount.parentElement.insertBefore(resetFilter, taskCount);
+  } else {
+    summary.prepend(accountName);
+    sidebarTools.before(courseStrip);
+    statusToolbar.append(resetFilter);
+  }
+  progress.open = !mobileView.matches;
+  closeTools();
+}
+toolsToggle.addEventListener('click', () => {
+  const isOpen = accountBar.classList.toggle('tools-open');
+  toolsToggle.setAttribute('aria-expanded', String(isOpen));
+});
+document.addEventListener('click', event => {
+  if (!accountBar.contains(event.target)) closeTools();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeTools();
+});
+actions.addEventListener('click', event => {
+  if (event.target.closest('button,a')) closeTools();
+});
+mobileView.addEventListener('change', fitLayout);
+fitLayout();
+
+})();
+</script>
+<script>
+
+(() => {
+  const exportButton = document.getElementById("exportBackup");
+  const importButton = document.getElementById("importBackup");
+  const fileInput = document.getElementById("backupFile");
+  const validId = value => typeof value === "string" && /^[a-zA-Z0-9_-]{1,200}$/.test(value);
+  const validColor = value => typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
+  function validateBackup(data) {
+    if (!data || !Array.isArray(data.courses) || !Array.isArray(data.tasks) || !data.settings || typeof data.settings !== "object" || Array.isArray(data.settings)) throw Error("备份格式不正确，请选择本程序导出的 JSON。");
+    if (data.courses.some(c => !c || !validId(c.id) || typeof c.name !== "string" || !validColor(c.color))) throw Error("备份中的课程格式不正确。");
+    if (data.tasks.some(t => !t || !validId(t.id) || !validId(t.courseId) || typeof t.name !== "string" || !["not-started","in-progress","done","blocked"].includes(t.status) || !["high","medium","low"].includes(t.priority))) throw Error("备份中的任务格式不正确。");
+    for (const key of ["primaryColor","secondaryColor","backgroundColor"]) if (data.settings[key] !== undefined && !validColor(data.settings[key])) throw Error("备份中的主题颜色格式不正确。");
+  }
+  exportButton.addEventListener("click", () => {
+    const data = {version:1,...globalThis.currentLocalBackup()};
+    const url = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
+    const a = document.createElement("a");
+    a.href = url; a.download = "StudyBloom-local-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click(); setTimeout(() => URL.revokeObjectURL(url),1000);
+  });
+  importButton.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", async () => {
+    try {
+      if (!fileInput.files?.[0]) return;
+      if (fileInput.files[0].size > 5 * 1024 * 1024) throw Error("备份文件过大，请选择 5 MB 以内的 JSON。");
+      const data = JSON.parse(await fileInput.files[0].text());
+      validateBackup(data);
+      if (!confirm("将备份合并到当前浏览器；相同编号的记录以备份为准。继续？")) return;
+      const current = globalThis.currentLocalBackup();
+      const mergeRows = (existing,incoming) => [...new Map([...existing,...incoming].map(x=>[x.id,x])).values()];
+      globalThis.applyLocalBackup({
+        courses:mergeRows(current.courses,data.courses),
+        tasks:mergeRows(current.tasks,data.tasks.map(t=>({...t,status:t.status==="blocked"?"not-started":t.status,completedAt:t.completedAt||null}))),
+        settings:{...current.settings,...data.settings}
+      });
+      saveData();
+      alert("备份已导入并保存到当前浏览器。其他设备需手动导入同一份备份。");
+    } catch (error) { alert(error.message || "导入失败，请检查备份文件。"); }
+    finally { fileInput.value = ""; }
+  });
+})();
+
+</script>
 </body>
 </html>
