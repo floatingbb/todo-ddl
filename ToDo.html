@@ -2094,6 +2094,8 @@
       )
     };
 
+    let settingsDraft = null;
+
     let selectedCourseId = "all";
     let selectedStatus = "all";
 
@@ -2194,25 +2196,27 @@
     }
 
     function applySettings() {
+      const activeSettings = settingsDraft || settings;
+
       document.documentElement.style.setProperty(
         "--theme-primary",
-        settings.primaryColor
+        activeSettings.primaryColor
       );
 
       document.documentElement.style.setProperty(
         "--theme-secondary",
-        settings.secondaryColor
+        activeSettings.secondaryColor
       );
 
       document.documentElement.style.setProperty(
         "--theme-background",
-        settings.backgroundColor
+        activeSettings.backgroundColor
       );
 
       document.documentElement.style.setProperty(
         "--theme-light",
         mixColor(
-          settings.primaryColor,
+          activeSettings.primaryColor,
           "#FFFFFF",
           0.84
         )
@@ -2220,13 +2224,13 @@
 
       document.getElementById(
         "workbenchTitle"
-      ).textContent = settings.title;
+      ).textContent = activeSettings.title;
 
       document.getElementById(
         "workbenchSubtitle"
-      ).textContent = settings.subtitle;
+      ).textContent = activeSettings.subtitle;
 
-      document.title = settings.title;
+      document.title = activeSettings.title;
     }
 
     function updateColorText(inputId, textId) {
@@ -2502,12 +2506,12 @@
       document
         .querySelectorAll("[data-course-filter]")
         .forEach(button => {
-          button.addEventListener("click", () => {
+          button.onclick = () => {
             selectedCourseId =
               button.dataset.courseFilter;
 
             render();
-          });
+          };
         });
     }
 
@@ -3255,6 +3259,11 @@
 
     function closeModal(id) {
       document.getElementById(id).classList.remove("show");
+
+      if (id === "settingsModal") {
+        settingsDraft = null;
+        applySettings();
+      }
     }
 
     function getDeadlineValue() {
@@ -3562,6 +3571,8 @@
     }
 
     function openSettings() {
+      settingsDraft = { ...settings };
+
       document.getElementById(
         "workbenchNameInput"
       ).value = settings.title;
@@ -3883,7 +3894,8 @@
     document
       .getElementById("themePrimaryInput")
       .addEventListener("input", event => {
-        settings.primaryColor = event.target.value;
+        if (!settingsDraft) return;
+        settingsDraft.primaryColor = event.target.value;
 
         applySettings();
 
@@ -3896,7 +3908,8 @@
     document
       .getElementById("themeSecondaryInput")
       .addEventListener("input", event => {
-        settings.secondaryColor = event.target.value;
+        if (!settingsDraft) return;
+        settingsDraft.secondaryColor = event.target.value;
 
         applySettings();
 
@@ -3909,7 +3922,8 @@
     document
       .getElementById("themeBackgroundInput")
       .addEventListener("input", event => {
-        settings.backgroundColor = event.target.value;
+        if (!settingsDraft) return;
+        settingsDraft.backgroundColor = event.target.value;
 
         applySettings();
 
